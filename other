@@ -1,0 +1,13 @@
+#! /bin/bash
+
+for i in "$@"
+do
+	echo $i
+done
+
+a=( "$@" )
+
+for i in ${a[@]}
+do
+	echo $i
+done

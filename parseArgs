@@ -1,0 +1,36 @@
+#! /bin/bash
+
+# Creates a list of possible options. "Avil" is simply a filler that if[] will evaluate to true
+declare -A options
+options=( [-a]="Avil" [-d]="Avil" [-g]="Avil" [-l]="Avil" [-v]="Avil" )
+
+OPTIONS=(  ) # List of passed-in options
+ACTIONS=(  ) # List of arguement to each option
+
+for i in "$@" # Reads through arguements and preserves arguements with spaces
+do
+	args=( ${args[@]} $i )
+done
+
+echo $@
+
+for i in ${args[@]}
+do
+	echo $i
+done
+
+for index in ${!args[@]} 
+do
+	if [ ${options[${args[$index]}]} ]
+		
+	then
+		
+	else
+	fi
+done
+
+for i in ${!output[@]}
+do
+	echo $i
+	echo ${output[$i]}
+done

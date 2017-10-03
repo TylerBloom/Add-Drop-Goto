@@ -1,0 +1,16 @@
+_adg()
+{
+	# define variables
+	local cur JUMPS
+	source waypoints.txt
+	COMPREPLY=()
+	cur="${COMP_WORDS[COMP_CWORD]}"
+
+	# generate list of goto names
+	JUMPS="${jumps[@]}"
+	
+	# pass Wordlist to cur
+	COMPREPLY=( $(compgen -W "${JUMPS}" -- ${cur}) )
+	return 0
+} 
+complete -F _adg adg

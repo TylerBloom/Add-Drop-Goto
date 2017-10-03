@@ -1,0 +1,236 @@
+#! /bin/bash
+
+source waypoints.txt
+
+args=()
+verbose=""
+
+writeWayPoints (){
+	if [ ! -e ${wayPointsLocation}/waypoints.txt ]
+	then
+		for location in $(echo $PATH | sed 's/:/ /g')
+		do
+			if [ -e ${location}/waypoints.txt ]
+			then
+				wayPointsLocation=$location
+				break
+			fi
+		done
+	fi
+	rm ${wayPointsLocation}/waypoints.txt
+	touch ${wayPointsLocation}/waypoints.txt
+	echo "wayPointsLocation=""'"$wayPointsLocation"'" >> ${wayPointsLocation}/waypoints.txt
+	echo "posts=( "${posts[@]}" )" >> ${wayPointsLocation}/waypoints.txt
+	echo "jumps=( "${jumps[@]}" )" >> ${wayPointsLocation}/waypoints.txt
+	echo "declare -A wayPoints" >> ${wayPointsLocation}/waypoints.txt
+	output="wayPoints=( "
+	for index in ${!posts[@]}
+	do
+		output=$output"["${jumps[$index]}"]="${posts[$index]}" "
+	done
+	output=$output" )"
+	echo $output >> ${wayPointsLocation}/waypoints.txt
+}
+
+readWayPoints (){
+	echo "Current waypoints:"
+	for index in ${!posts[@]}
+	do
+		echo "'"${jumps[$index]}"' as "${posts[$index]}
+	done
+	echo ""
+}
+
+for arg in "${@}"
+do
+	args=( ${args[@]} $arg )
+done
+
+aOpts=()
+dOpts=()
+gOpts=()
+runAdd=""
+runDrop=""
+runGoto=""
+newJumps=()
+newPosts=()
+
+for index in ${!args[@]} 
+do
+	case "${args[$index]}" in
+		"-a" ) # Add
+			runAdd="run"
+			for opt in $(seq $index ${#args[@]})
+			do
+				case "${args[$opt]}" in
+					# Looks through arguements until it finds another option
+					"-a") continue ;;
+					"-d") break ;;
+					"-g") break ;;
+					"-v") continue ;;
+					"-l") continue ;;
+					*)    aOpts=( ${aOpts[@]} ${args[$opt]} )
+				esac
+			done
+			;;
+		"-d") # Drop
+			runDrop="run"
+			for opt in $(seq $index ${#args[@]})
+			do
+				case "${args[$opt]}" in
+					# Looks through arguements until it finds another option
+					"-a") break ;;
+					"-d") continue ;;
+					"-g") break ;;
+					"-v") continue ;;
+					"-l") continue ;;
+					*)    dOpts=( ${dOpts[@]} ${args[$opt]} )
+				esac
+			done
+			;;
+		"-g") # Goto
+			runGoto="run"
+			for opt in $(seq $index ${#args[@]})
+			do
+				case "${args[$opt]}" in
+					# Looks through arguements until it finds another option
+					"-a") break ;;
+					"-d") break ;;
+					"-g") continue ;;
+					"-v") continue ;;
+					"-l") continue ;;
+					*)    gOpts=( ${gOpts[@]} ${args[$opt]} )
+				esac
+			done
+			;;
+		"-v") # Set verbose
+			verbose="Read-out"
+			if [ $verbose ]
+			then
+				echo "Verbose option found. Additional read-out will appear"
+			fi
+			;;
+		"-l") # List out
+			readWayPoints
+		;;
+	esac
+done
+
+baseDir=$(pwd)
+
+if [ $runDrop ] # Processes things to be dropped
+then
+	if [ $verbose ]
+	then
+		readWayPoints
+	fi
+	for opt in ${dOpts[@]}
+	do
+		for index in ${!jumps[@]} # Finds the option's location in the list and removes it
+		do
+			if [ $opt == ${jumps[$index]} ]
+			then
+				if [ $verbose ]
+				then
+					echo "Match found for $opt: ${posts[$index]} as ""'"${jumps[$index]}"'"".  Dropping."
+				fi
+				jumps[$index]=""
+				posts[$index]=""
+			fi
+		done
+		jumps=( ${jumps[@]} )
+		posts=( ${posts[@]} )
+	done
+	if [ $verbose ]
+	then
+		readWayPoints
+	fi
+	# Writes the changes to file
+	writeWayPoints
+	source waypoints.txt
+fi
+
+if [ $runAdd ] # Processes things that need to be added
+then
+	if [ $verbose ]
+	then
+		readWayPoints
+	fi
+	for opt in ${aOpts[@]} # Reading and sorting arguements to -a
+	do
+		if [ $opt == "--f" ] # Sets overwrite
+		then
+			if [ $verbose ]
+			then
+				echo "Force option found. New waypoints will overwrite past ones."
+			fi
+			force="Force"
+		elif [ -e $opt ] # Sorted posts from jumps
+		then
+			newPosts=( ${newPosts[@]} $opt )
+		else
+			newJumps=( ${newJumps[@]} $opt )
+		fi
+
+	done
+	for index in ${!newJumps[@]} # Adds new waypoints
+	do
+		cd $baseDir
+		cd ${newPosts[$index]}
+		if [ ${wayPoints[${newJumps[$index]}]} ] # Checks to see if the waypoint currently exists
+		then
+			if [ $force ] # Checks to see what to do when a conflict arises
+			then # Overwrites existing waypoint
+				if [ $verbose ]
+				then
+					echo ${newJumps[$index]} already exists as ${wayPoints[${newJumps[$index]}]}.
+					echo Forcing ${newJumps[$index]} as $(pwd)
+				fi
+				for i in ${!jumps[@]} 
+				do
+					if [ ${newJumps[$index]} == ${jumps[$i]} ]
+					then
+						if [ $verbose ]
+						then
+							echo "Match found for ${newJumps[$index]}: ${posts[$i]} as ""'"${jumps[$i]}"'"".  Dropping."
+						fi
+						jumps[$i]=""
+						posts[$i]=""
+					fi
+				done
+				jumps=( ${jumps[@]} )
+				posts=( ${posts[@]} )
+			else # Ignores passed in waypoint
+				echo ${newJumps[$index]} already exists as ${wayPoints[${newJumps[$index]}]}.
+				echo Use "'"--f"'" to overwrite waypoints.
+				continue
+			fi
+		fi
+		if [ $verbose ]
+		then
+			echo "Adding "$(pwd)" as '"${newJumps[$index]}"'"
+		fi
+		jumps=( ${jumps[@]} ${newJumps[$index]} )
+		posts=( ${posts[@]} $(pwd) )
+		cd $baseDir
+	done
+	if [ $verbose ]
+	then
+		readWayPoints
+	fi
+	# Writes changes to waypoint.txt
+	writeWayPoints
+	source waypoints.txt
+fi
+
+if [ $runGoto ] # Goes to the location specified
+then
+	if [ $verbose ]
+	then
+		echo "Going to "${wayPoints[${gOpts[0]}]}" as ""'"${gOpts[0]}"'"
+	fi
+	echo "cd ${wayPoints[${gOpts[0]}]}" >> ~/goto.tmp
+	source ~/goto.tmp
+	rm ~/goto.tmp
+fi
+
