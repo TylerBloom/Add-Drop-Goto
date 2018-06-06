@@ -225,12 +225,18 @@ fi
 
 if [ $runGoto ] # Goes to the location specified
 then
-	if [ $verbose ]
+	if [ ${gOpts[0]} ]
 	then
-		echo "Going to "${wayPoints[${gOpts[0]}]}" as ""'"${gOpts[0]}"'"
+		if [ $verbose ]
+		then
+			echo "Going to "${wayPoints[${gOpts[0]}]}" as ""'"${gOpts[0]}"'"
+		fi
+		echo "cd ${wayPoints[${gOpts[0]}]}" >> ~/goto.tmp
+		source ~/goto.tmp
+		rm ~/goto.tmp
+		
+	else
+		echo "No waypoint was specified."
 	fi
-	echo "cd ${wayPoints[${gOpts[0]}]}" >> ~/goto.tmp
-	source ~/goto.tmp
-	rm ~/goto.tmp
 fi
 

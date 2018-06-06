@@ -1,5 +1,0 @@
-wayPointsLocation='/home/tylerbloom/bin'
-posts=(  )
-jumps=(  )
-declare -A wayPoints
-wayPoints=(  )

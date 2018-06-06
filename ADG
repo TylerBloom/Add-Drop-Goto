@@ -1,16 +1,56 @@
 _adg()
 {
 	# define variables
-	local cur JUMPS
+	local nums cur JUMPS latest DIRS word
+	
+	# Loading waypoints as new might have been entered
 	source waypoints.txt
+	
+	# Setting COMPREPLY to be an empty array as nothing should be passed to it
 	COMPREPLY=()
+	
+	# Setting cur to be the word the cursor is currently on
 	cur="${COMP_WORDS[COMP_CWORD]}"
 
-	# generate list of goto names
-	JUMPS="${jumps[@]}"
+	# Setting the default output to list the possible options
+	latest="opt"
 	
-	# pass Wordlist to cur
-	COMPREPLY=( $(compgen -W "${JUMPS}" -- ${cur}) )
+	# Reading through up to the cursor to determine what output is needed
+	nums=( $(seq $COMP_CWORD | sed 's/\n/ /g') )
+	for word in "${nums[@]}"
+	do
+		case "${COMP_WORDS[${word}]}" in 
+			"-a")  latest="dir";;
+			"-d")  latest="way";;
+			"-g")  latest="way";;
+			"--f") latest="bth";;
+			"-l")  latest="non";;
+			"-c")  latest="non";;
+			"-r")  latest="way";;
+			"-h")  latest="non";;
+		esac
+	done
+	
+	# Generates the output lists
+	JUMPS="${jumps[@]}"
+	DIRS="$(ls -d "${cur}"* 2>&1)"
+	if [ ! -z "$DIRS" ]
+	then #Checks to see if DIRS is empty to aviod and error
+		if [[ "${DIRS}" = *'ls: cannot access '*': No such file or directory'* ]]
+		then #Checks to make sure the directory being looked for exists
+			DIRS=""
+		fi
+	fi
+	
+	# Determines which output is needed and returns the appropiate list(s)
+	case ${latest} in
+		"dir") COMPREPLY=( $(compgen -W "${DIRS[@]}" -- ${cur}) );;
+		"way") COMPREPLY=( $(compgen -W "${JUMPS}" -- ${cur}) );;
+		"bth") COMPREPLY=( $(compgen -W '${DIRS[@]} ${JUMPS}' -- ${cur}) );;
+		"non") COMPREPLY=( $(compgen -W "" -- ${cur}) );;
+		"opt") COMPREPLY=( $(compgen -W "-a -d -g -l -c -r -h --f" -- ${cur}) );;
+	esac
+	
 	return 0
 } 
 complete -F _adg adg
