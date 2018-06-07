@@ -33,7 +33,7 @@ _adg()
 	
 	# Generates the output lists
 	JUMPS="${jumps[@]}"
-	DIRS="$(ls -d "${cur}"* 2>&1)"
+	DIRS="$(ls -d "${cur}"*/ 2>&1)"
 	if [ ! -z "$DIRS" ]
 	then #Checks to see if DIRS is empty to aviod and error
 		if [[ "${DIRS}" = *'ls: cannot access '*': No such file or directory'* ]]

@@ -2,9 +2,7 @@
 
 source waypoints.txt
 
-args=()
-verbose=""
-
+################################################################################################
 writeWayPoints (){
 	if [ ! -e ${wayPointsLocation}/waypoints.txt ]
 	then
@@ -40,12 +38,16 @@ readWayPoints (){
 	done
 	echo ""
 }
+################################################################################################
+
+args=()
 
 for arg in "${@}"
 do
 	args=( ${args[@]} $arg )
 done
 
+verbose=""
 aOpts=()
 dOpts=()
 gOpts=()
