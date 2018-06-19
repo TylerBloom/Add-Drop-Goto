@@ -1,5 +1,5 @@
 Need to add:
-if waypoints does not exist, clear jumps, posts, and waypoints
+if waypoints.txt does not exist, clear jumps, posts, and waypoints
 create a generalized arguement parse in place of the linear parse
 add -c to clear all waypoints posts and jumps
 add -r to rename a waypoint
