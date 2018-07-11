@@ -1,0 +1,28 @@
+# A function that writes a list of waypoints to file and to the global variables
+writeWayPoints (){
+  if [ ! -e ${wayPointsLocation}/waypoints.txt ]
+  then
+    for location in $(echo $PATH | sed 's/:/ /g')
+    do
+      if [ -e ${location}/waypoints.txt ]
+      then
+        wayPointsLocation=$location
+        break
+      fi
+    done
+  fi
+  rm ${wayPointsLocation}/waypoints.txt
+  touch ${wayPointsLocation}/waypoints.txt
+  echo "wayPointsLocation=""'"$wayPointsLocation"'" >> ${wayPointsLocation}/waypoints.txt
+  echo "posts=( "${posts[@]}" )" >> ${wayPointsLocation}/waypoints.txt
+  echo "jumps=( "${jumps[@]}" )" >> ${wayPointsLocation}/waypoints.txt
+  echo "declare -A wayPoints" >> ${wayPointsLocation}/waypoints.txt
+  output="wayPoints=( "
+  for index in ${!posts[@]}
+  do
+    output=$output"["${jumps[$index]}"]="${posts[$index]}" "
+  done
+  output=$output" )"
+  echo $output >> ${wayPointsLocation}/waypoints.txt
+}
+
