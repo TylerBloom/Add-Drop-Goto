@@ -57,8 +57,8 @@ $ adg -v -a foobar \~/foo/bar/
 >> 
 ```
 NOTES:<br />
-The options -l and -v can be put in anywhere, i.e. before or after any other options. This script it also tab completable.<br />
+This script it also tab completable.<br />
 If you type "adg -g foo" then press tab, it will auto-complete to "adg -g foobar".<br />
-During configuration, a directory called "\~/.waypoints" will be created to store the adg script and the storage file waypoints.txt.<br />
+During configuration, a directory called "\~/.waypoints" will be created to store the adg script, associated functions, and waypoints.txt (the waypoints storage file).<br />
 These can be moved to anywhere you wish but are required to be in your global PATH. Waypoints will figure out that it has been moved and adjust accordingly.<br />
-Lastly, this works across terminals, so you can add a waypoint in one terminal and switch to another and goto that waypoint from the new terminal.
+Lastly, this works across terminals, so you can add a waypoint in one terminal, switch to another and goto the waypoint set from the original terminal without issue.
