@@ -10,8 +10,14 @@ then
 fi
 
 cp adg ~/.waypoints
+cp findFunctions.sh ~/.waypoints
+cp src/* ~/.waypoints
+
 echo "Adding completion file to /etc/bash_completion.d/"
+
 sudo cp ADG /etc/bash_completion.d/adg
+
+[[ $(cat ~/.bashrc) != *'source ~/.waypoints/findFunctions.sh'* ]] && echo 'source ~/.waypoints/findFunctions.sh' >> ~/.bashrc # Addes waypoints upon startup
 
 [[ $(cat ~/.bashrc) != *'source ~/.waypoints/waypoints.txt'* ]] && echo 'source ~/.waypoints/waypoints.txt' >> ~/.bashrc # Addes waypoints upon startup
 
