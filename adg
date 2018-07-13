@@ -24,6 +24,7 @@ do
     "d") oldMarker="d";;
     "g") oldMarker="g";;
     "l") readWayPoints;;
+    "c") runClear;;
     "f") force="True";;
     "v") verbose="True";;
   esac
