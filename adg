@@ -1,39 +1,9 @@
 #! /bin/bash
 
-[ -e ${wayPointsLocation}/waypoints.txt ] && source ${wayPointsLocation}/waypoints.txt
+output=$(~/.waypoints/adg.py ${@})
 
-argBlocks=()
+[ ! output ] && if [ "${@}" == *"-l"* ]; then echo $output; else cd $output; fi
+    
+source ~/.waypoints/waypoints.txt
 
-for arg in "${@}"
-do
-  argBlocks=( ${argBlocks[@]} $arg )
-done
-
-argBlocks=( $(echo ${argBlocks[@]} | sed 's/ /____/g' | sed 's/-/ /g') )
-verbose=""
-force=""
-oldMarker=""
-
-for block in ${argBlocks[@]}
-do
-  block=( $(echo "${block}" | sed 's/____/ /g') )  
-  marker="${block[0]}"
-  options="${block[@]:1}"
-  case ${marker} in
-    "a") oldMarker="a";;
-    "d") oldMarker="d";;
-    "g") oldMarker="g";;
-    "l") readWayPoints;;
-    "c") runClear;;
-    "f") force="True";;
-    "v") verbose="True";;
-  esac
-  case ${oldMarker} in
-    "a") runAdd "$options";;
-    "d") runDrop "$options";;
-    "g") runGoto "$options";;
-  esac
-done
-
-[ -e ${wayPointsLocation}/waypoints.txt ] && source ${wayPointsLocation}/waypoints.txt
 

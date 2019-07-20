@@ -4,7 +4,7 @@ _adg()
 	local nums cur JUMPS latest DIRS word
 	
 	# Loading waypoints as new might have been entered
-	source waypoints.txt
+	source ~/.waypoints/waypoints.txt
 	
 	# Setting COMPREPLY to be an empty array as nothing should be passed to it
 	COMPREPLY=()
@@ -12,24 +12,10 @@ _adg()
 	# Setting cur to be the word the cursor is currently on
 	cur="${COMP_WORDS[COMP_CWORD]}"
 
-	# Setting the default output to list the possible options
-	latest="opt"
+	# Setting the default output to list locales
+	latest="loc"
 	
-	# Reading through up to the cursor to determine what output is needed
-	nums=( $(seq $COMP_CWORD | sed 's/\n/ /g') )
-	for word in "${nums[@]}"
-	do
-		case "${COMP_WORDS[${word}]}" in 
-			"-a")  latest="dir";;
-			"-d")  latest="way";;
-			"-g")  latest="way";;
-			"--f") latest="bth";;
-			"-l")  latest="non";;
-			"-c")  latest="non";;
-			"-r")  latest="way";;
-			"-h")  latest="non";;
-		esac
-	done
+  
 	
 	# Generates the output lists
 	JUMPS="${jumps[@]}"
@@ -48,7 +34,7 @@ _adg()
 		"way") COMPREPLY=( $(compgen -W "${JUMPS}" -- ${cur}) );;
 		"bth") COMPREPLY=( $(compgen -W '${DIRS[@]} ${JUMPS}' -- ${cur}) );;
 		"non") COMPREPLY=( $(compgen -W "" -- ${cur}) );;
-		"opt") COMPREPLY=( $(compgen -W "-a -d -g -l -c -r -h --f" -- ${cur}) );;
+		"opt") COMPREPLY=( $(compgen -W "-a -d -l" -- ${cur}) );;
 	esac
 	
 	return 0
