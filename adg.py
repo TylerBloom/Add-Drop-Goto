@@ -4,18 +4,19 @@ import os
 import configparser
 from sys import argv
 
+
 # Adds a site or locale to waypoints
 def addPlace ():
   if os.path.isdir( argv[3] ):
     os.chdir( argv[3] )
-    waypoints["locales"][argv[2]] = os.environ["PWD"]
+    waypoints["locales"][argv[2]] = os.getcwd()
   else:
     waypoints["sites"][argv[2]] = argv[3]
 
 
 # Removes places from waypoints
 def dropPlaces ():
-  for i in argv[1:]:
+  for i in argv[2:]:
     try:
       del( waypoints["locales"][i] )
     except KeyError:
@@ -48,10 +49,12 @@ def listOut ():
     print "  " + i + " as " + waypoints["sites"][i]
 
 
+# Opening a config parser and having it parse the waypoints.ini file that
+# should be in a hidden directory in the home directory
 waypoints = configparser.ConfigParser()
 waypoints.read( os.environ["HOME"] + "/.waypoints/waypoints.ini" )
 
-
+# Reading the arguments then calling the appropriate function
 if argv[1] == "-a":
   addPlace()
 elif argv[1] == "-d":
@@ -62,18 +65,12 @@ else:
   location()
 
 
+# Writing the config tree back to the waypoints.ini file
 storeFile = open( os.environ["HOME"] + "/.waypoints/waypoints.ini", "w" )
 waypoints.write( storeFile )
 storeFile.close()
 
-bashFile = open( os.environ["HOME"] + "/.waypoints/waypoints.ini", "w" )
-bashFile.write( "locales=( " )
-for i in waypoints["locales"]:
-  bashFile.write( i + " " )
-bashFile.write( ")\nsites=( " )
-for i in waypoints["sites"]:
-  bashFile.write( i + " " )
-bashFile.write( ")" )
-bashFile.close()
+
+
 
 

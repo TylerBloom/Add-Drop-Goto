@@ -2,8 +2,7 @@
 
 output=$(~/.waypoints/adg.py ${@})
 
-[ ! output ] && if [ "${@}" == *"-l"* ]; then echo $output; else cd $output; fi
-    
-source ~/.waypoints/waypoints.txt
+[ "$output" ] && if [ "${@}" = "-l" ]; then ~/.waypoints/adg.py -l; else cd $output; fi
 
+    
 
