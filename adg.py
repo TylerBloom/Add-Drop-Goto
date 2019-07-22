@@ -27,12 +27,20 @@ def dropPlaces ():
 def location ():
   prtVal = ""
   places = argv[1].split("/")
+
+  if places[-1] == '':
+    del(places[-1])
   
-  prtVal += waypoints["locales"][places[0]] if places[0] in waypoints["locales"] else places[0]
+  if places[0] in waypoints["locales"]:
+    prtVal += waypoints["locales"][places[0]]
+  elif places[0] in waypoints["sites"]:
+    prtVal += waypoints["sites"][places[0]]
+  else:
+    prtVal += places[0]
   
   for i in range(1, len(places)):
     prtVal += "/"
-    prtVal += waypoints["sites"][places[i]] if places[i] in waypoints["site"] else places[i]
+    prtVal += waypoints["sites"][places[i]] if places[i] in waypoints["sites"] else places[i]
   
   print prtVal
 

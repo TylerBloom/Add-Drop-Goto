@@ -11,7 +11,8 @@ _adg()
   
   # Calls the auto-complete python script
   COMPREPLY=( $(compgen -W "$(~/.waypoints/autoComplete.py ${COMP_WORDS[@]})" -- ${cur}) )
-	
+	if [ ${#COMPREPLY[@]} == 1 ]; then if [ "${COMPREPLY[0]}" == "* " ]; then COMPREPLY=${COMPREPLY[0][::-1]}; fi; fi 
+
 	return 0
 } 
 complete -F _adg adg
