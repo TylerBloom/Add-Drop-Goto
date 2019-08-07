@@ -16,11 +16,14 @@ if len(argv) == 2 and not "-" in argv[1]: # adg w/o arguments should require a f
 elif "-l" == argv[2]:
   print ""
 elif "-a" == argv[2]:
-  retList = []
-  for thing in glob.glob( "*" if argv[-1] == "-a" else argv[-1] + "*/" ):
-    if os.path.isdir(thing):
-      retList.append( thing )
-  print " ".join(retList).strip() 
+  if len(argv) == 4:
+    print ""
+  else:
+    retList = []
+    for thing in glob.glob( "*" if argv[-1] == "-a" else argv[-1] + "*/" ):
+      if os.path.isdir(thing):
+        retList.append( thing )
+    print " ".join(retList).strip() 
 elif "-d" == argv[2]:
   print (" ".join(waypoints["locales"]) + " " + " ".join(waypoints["sites"])).strip()
 else:

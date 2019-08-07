@@ -2,6 +2,9 @@ _adg()
 {
 	# define variables
 	local nums cur JUMPS latest DIRS word
+
+  # Removes the space in the auto-complete
+  compopt -o nospace
 	
 	# Setting COMPREPLY to be an empty array as nothing should be passed to it
 	COMPREPLY=()
