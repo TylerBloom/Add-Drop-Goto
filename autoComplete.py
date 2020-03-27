@@ -13,18 +13,20 @@ retStr = ""
 
 if len(argv) == 2 and not "-" in argv[1]: # adg w/o arguments should require a flag, a locale or site, or a nearby directory
   print (" ".join(waypoints["locales"]) + " " + " ".join(waypoints["sites"]) + " " + " ".join( [ thing if not "." in thing and os.path.isdir(thing) else "" for thing in os.listdir("./") ] )).strip()
-elif "-l" == argv[2]:
+elif "-l" == argv[1]:
   print ""
-elif "-a" == argv[2]:
-  if len(argv) == 4:
-    print ""
-  else:
+elif "-a" == argv[1]:
+  if   len(argv) == 2:
     retList = []
     for thing in glob.glob( "*" if argv[-1] == "-a" else argv[-1] + "*/" ):
       if os.path.isdir(thing):
         retList.append( thing )
     print " ".join(retList).strip() 
-elif "-d" == argv[2]:
+  elif len(argv) == 3:
+    print ""
+  elif len(argv) == 4:
+    print ""
+elif "-d" == argv[1]:
   print (" ".join(waypoints["locales"]) + " " + " ".join(waypoints["sites"])).strip()
 else:
   currEntry = argv[-1].split("/")
@@ -43,10 +45,11 @@ else:
       elif thing != currEntry[-1]:
         listStr += thing + "/"
     prntStr = ""
-    for thing in os.listdir(listStr):
-      if not "." in thing and os.path.isdir(listStr + thing):
-        prntStr += "/".join(currEntry[:-1]) + "/" + thing + "/ "
-    print prntStr.strip()
+    if os.path.isdir(listStr):
+      for thing in os.listdir(listStr):
+        if not "." in thing and os.path.isdir(listStr + thing):
+          prntStr += "/".join(currEntry[:-1]) + "/" + thing + "/ "
+      print prntStr.strip()
       
 
 
