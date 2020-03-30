@@ -4,6 +4,12 @@ import os
 import configparser
 from sys import argv
 
+def isIn( key, place ):
+  for thing in waypoints[key]:
+    if waypoints[key][thing] == place:
+      return True
+  return False
+
 
 # Adds a site or locale to waypoints
 def addPlace ():
@@ -31,16 +37,24 @@ def location ():
   if places[-1] == '':
     del(places[-1])
   
-  if places[0] in waypoints["locales"]:
-    prtVal += waypoints["locales"][places[0]]
-  elif places[0] in waypoints["sites"]:
-    prtVal += waypoints["sites"][places[0]]
+  if len(places) == 1 and places[0] in waypoints["sites"]:
+    while not isIn( "locales", os.getcwd() ):
+      os.chdir("../")
+      if os.getcwd() == "/":
+        break
+    if os.path.isdir( os.getcwd() + "/" + waypoints["sites"][places[0]] ):
+      prtVal = os.getcwd() + "/" + waypoints["sites"][places[0]]
   else:
-    prtVal += places[0]
-  
-  for i in range(1, len(places)):
-    prtVal += "/"
-    prtVal += waypoints["sites"][places[i]] if places[i] in waypoints["sites"] else places[i]
+    if places[0] in waypoints["locales"]:
+      prtVal += waypoints["locales"][places[0]]
+    elif places[0] in waypoints["sites"]:
+      prtVal += waypoints["sites"][places[0]]
+    else:
+      prtVal += places[0]
+    
+    for i in range(1, len(places)):
+      prtVal += "/"
+      prtVal += waypoints["sites"][places[i]] if places[i] in waypoints["sites"] else places[i]
   
   print prtVal
 
@@ -80,7 +94,9 @@ waypoints = configparser.ConfigParser()
 waypoints.read( os.environ["HOME"] + "/.waypoints/waypoints.ini" )
 
 # Reading the arguments then calling the appropriate function
-if argv[1] == "" or argv[1] == "-h":
+if len(argv) == 1:
+  printHelp()
+elif argv[1] == "-h":
   printHelp()
 if argv[1] == "-a":
   addPlace()
@@ -99,5 +115,13 @@ storeFile.close()
 
 
 
-
-
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
