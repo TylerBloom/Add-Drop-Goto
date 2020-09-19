@@ -98,7 +98,7 @@ if len(argv) == 1:
   printHelp()
 elif argv[1] == "-h":
   printHelp()
-if argv[1] == "-a":
+elif argv[1] == "-a":
   addPlace()
 elif argv[1] == "-d":
   dropPlaces()
