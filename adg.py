@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 
 import os 
-import configparser
+import ConfigParser
 from sys import argv
 
 def isIn( key, place ):
@@ -90,7 +90,7 @@ def printHelp ():
 
 # Opening a config parser and having it parse the waypoints.ini file that
 # should be in a hidden directory in the home directory
-waypoints = configparser.ConfigParser()
+waypoints = ConfigParser.ConfigParser()
 waypoints.read( os.environ["HOME"] + "/.waypoints/waypoints.ini" )
 
 # Reading the arguments then calling the appropriate function
@@ -115,13 +115,3 @@ storeFile.close()
 
 
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
