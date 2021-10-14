@@ -1,6 +1,6 @@
 
-use std::error::Error;
 use argparse::{ArgumentParser, StoreTrue, List, Store};
+use std::fs;
 
 mod waypoints;
 
@@ -35,9 +35,10 @@ fn main() {
     //println!( "Drop: {:?}", drop );
     //println!( "Goto: {:?}", go_to );
 
-    let mut tmp = waypoints::new();
+    let mut tmp: waypoints::Waypoints = waypoints::load(&String::from("~/.config/adg/waypoints.json"));
     tmp.drop( &drop );
     tmp.add( &add );
+    tmp.save( String::from("~/.config/adg/waypoints.json") );
     if !go_to.is_empty() {
         //println!( "Going to {}", tmp.goto( go_to.clone() ) );
         println!( "{}", &tmp.goto( go_to.clone() ));

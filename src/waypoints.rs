@@ -1,8 +1,23 @@
-use std::fs::{metadata, canonicalize};
+use std::fs::{File, read_to_string, metadata, canonicalize};
+use std::io::prelude::*;
 use std::path::PathBuf;
 use std::collections::HashMap;
 use std::fmt;
+use serde::{Deserialize, Serialize};
 
+
+#[derive(Serialize, Deserialize)]
+struct RawWaypoints {
+    locale_names: Vec<String>,
+    locale_values: Vec<String>,
+    site_names: Vec<String>,
+    site_values: Vec<String>,
+}
+
+pub struct Waypoints {
+    locales: HashMap<String, String>,
+    sites: HashMap<String, String>,
+}
 
 pub fn new( ) -> Waypoints {
     Waypoints {
@@ -10,9 +25,18 @@ pub fn new( ) -> Waypoints {
         sites: HashMap::new()
     }
 }
-pub struct Waypoints {
-    locales: HashMap<String, String>,
-    sites: HashMap<String, String>,
+
+pub fn load( filename: &String ) -> Waypoints {
+    let file_data = read_to_string(filename).expect("Waypoints file was not found...");
+    let input_waypoints: RawWaypoints = serde_json::from_str(&file_data).expect("Waypoints file was malformed...");
+    let mut digest: Waypoints = new();
+    for (i, name) in input_waypoints.locale_names.iter().enumerate() {
+        digest.locales.insert( name.clone(), input_waypoints.locale_values[i].clone() );
+    }
+    for (i, name) in input_waypoints.site_names.iter().enumerate() {
+        digest.sites.insert( name.clone(), input_waypoints.site_values[i].clone() );
+    }
+    digest
 }
 
 impl std::fmt::Display for Waypoints {
@@ -39,6 +63,36 @@ impl Waypoints {
         } else {
             loc
         }
+    }
+    
+    pub fn save( &self, filename: &String ) {
+        let mut file = File::open(filename).unwrap();
+        let mut content = String::from("{");
+        let mut locale_names = String::from("\n\t\"local_names\" : [ ");
+        let mut locale_values = String::from("\n\t\"local_values\" : [ ");
+        for (name, value) in &self.locales {
+            locale_names += &name;
+            locale_names += ",";
+            locale_values += &value;
+            locale_values += ",";
+        }
+        locale_names += "]\n";
+        locale_values += "]\n";
+        let mut site_names = String::from("\n\t\"local_names\" : [ ");
+        let mut site_values = String::from("\n\t\"local_values\" : [ ");
+        for (name, value) in &self.sites {
+            site_names += &name;
+            site_names += ",";
+            site_values += &value;
+            site_values += ",";
+        }
+        site_names += "]\n";
+        site_values += "]\n";
+        content += &locale_names;
+        content += &locale_values;
+        content += &site_names;
+        content += &site_values;
+        file.read_to_string(&mut content);
     }
 
     pub fn add( &mut self, loc: &Vec<String> ) {
