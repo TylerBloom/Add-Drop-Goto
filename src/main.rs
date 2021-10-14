@@ -1,7 +1,9 @@
 
+use std::error::Error;
 use argparse::{ArgumentParser, StoreTrue, List, Store};
 
 mod waypoints;
+
 
 fn main() {
     // Goto is the default behaviour. If any (non-verbose) arguments are specified, this does
@@ -29,17 +31,19 @@ fn main() {
         ap.parse_args_or_exit();
     }
 
-    println!( "Add: {:?}", add );
-    println!( "Drop: {:?}", drop );
-    println!( "Goto: {:?}", go_to );
+    //println!( "Add: {:?}", add );
+    //println!( "Drop: {:?}", drop );
+    //println!( "Goto: {:?}", go_to );
 
     let mut tmp = waypoints::new();
     tmp.drop( &drop );
     tmp.add( &add );
     if !go_to.is_empty() {
-        println!( "{}", tmp.goto( go_to.clone() ) );
+        //println!( "Going to {}", tmp.goto( go_to.clone() ) );
+        println!( "{}", &tmp.goto( go_to.clone() ));
+        //GoTo(&tmp.goto( go_to.clone() ) );
     }
-    println!( "{}", tmp );
+    //println!( "{}", tmp );
 
 
 

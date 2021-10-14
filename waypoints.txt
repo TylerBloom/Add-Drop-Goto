@@ -1,1 +1,0 @@
-wayPointsLocation='/home/tylerbloom/.waypoints'

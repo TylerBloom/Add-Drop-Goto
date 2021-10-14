@@ -1,21 +1,11 @@
 #! /bin/bash
 
-[ ! -e ~/.waypoints ] && mkdir ~/.config/adg # Creates a directory to store waypoints.txt
+[ ! -e ~/.config/adg ] && mkdir ~/.config/adg # Creates a directory to store waypoints.txt
 
-[ ! -e ~/.waypoints/waypoints.ini ] && echo "[locales]" > ~/.waypoints/waypoints.ini && echo "[sites]" >> ~/.waypoints/waypoints.ini
+[ ! -e ~/.waypoints/waypoints.ini ] && cp waypoints.ini ~/.config/adg/
 
-cp adg ~/.waypoints
-cp adg.py ~/.waypoints
-cp autoComplete.py ~/.waypoints
+# TODO: The adg bash script needs to go somewhere... but where? This will depend on the shell...
 
-echo "Adding completion file to /etc/bash_completion.d/"
-
-sudo cp ADG /etc/bash_completion.d/adg
-
-
-[[ $(cat ~/.bashrc) != *'PATH=''"''${PATH}:~/.waypoints''"'* ]] && echo 'PATH=''"''${PATH}:~/.waypoints''"' >> ~/.bashrc # Addes the new directory to the PATH
-
+# TODO: This should be up to the user... different shells need different
+# configurations... Or I could support them...
 [[ $(cat ~/.bashrc) != *"alias adg='. adg'"* ]] && echo "alias adg='. adg'" >> ~/.bashrc # Addes required aliases
-
-echo "Configure complete. Please source ~/.bashrc and /etc/bash_completion for every terminal open or close it and open it again."
-echo "This only needs to happen once. Then you're good to go!"
