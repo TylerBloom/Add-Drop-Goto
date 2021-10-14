@@ -1,9 +1,7 @@
 
-mod waypoints;
-
 use argparse::{ArgumentParser, StoreTrue, List, Store};
 
-pub use waypoints::Waypoints;
+mod waypoints;
 
 fn main() {
     // Goto is the default behaviour. If any (non-verbose) arguments are specified, this does
@@ -35,7 +33,7 @@ fn main() {
     println!( "Drop: {:?}", drop );
     println!( "Goto: {:?}", go_to );
 
-    let mut tmp = Waypoints::new();
+    let mut tmp = waypoints::new();
     tmp.drop( &drop );
     tmp.add( &add );
     if !go_to.is_empty() {

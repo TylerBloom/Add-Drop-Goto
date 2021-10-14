@@ -1,7 +1,0 @@
-Need to add:
-if waypoints.txt does not exist, clear jumps, posts, and waypoints
-create a generalized arguement parse in place of the linear parse
-add -c to clear all waypoints posts and jumps
-add -r to rename a waypoint
-add -h to help
-process everything in the order it comes in, ie -a -l should be different than -l -a

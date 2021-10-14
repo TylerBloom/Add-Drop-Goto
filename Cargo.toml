@@ -1,5 +1,5 @@
 [package]
-name = "Add-Drop-Goto"
+name = "adg"
 version = "0.1.0"
 authors = ["TylerBloom <tylerbloom2222@gmail.com>"]
 edition = "2018"

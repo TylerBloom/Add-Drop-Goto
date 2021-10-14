@@ -1,6 +1,6 @@
 #! /bin/bash
 
-[ ! -e ~/.waypoints ] && mkdir ~/.waypoints # Creates a directory to store waypoints.txt
+[ ! -e ~/.waypoints ] && mkdir ~/.config/adg # Creates a directory to store waypoints.txt
 
 [ ! -e ~/.waypoints/waypoints.ini ] && echo "[locales]" > ~/.waypoints/waypoints.ini && echo "[sites]" >> ~/.waypoints/waypoints.ini
 
