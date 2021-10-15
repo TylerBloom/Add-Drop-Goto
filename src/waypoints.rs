@@ -1,4 +1,5 @@
 use std::fs::{File, read_to_string, metadata, canonicalize};
+use std::fs;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::collections::HashMap;
@@ -26,7 +27,7 @@ pub fn new( ) -> Waypoints {
     }
 }
 
-pub fn load( filename: &String ) -> Waypoints {
+pub fn load( filename: &PathBuf ) -> Waypoints {
     let file_data = read_to_string(filename).expect("Waypoints file was not found...");
     let input_waypoints: RawWaypoints = serde_json::from_str(&file_data).expect("Waypoints file was malformed...");
     let mut digest: Waypoints = new();
@@ -65,7 +66,8 @@ impl Waypoints {
         }
     }
     
-    pub fn save( &self, filename: &String ) {
+    pub fn save( &self, filename: &PathBuf ) {
+        println!( "{:?}", filename );
         let mut file = File::open(filename).unwrap();
         let mut content = String::from("{");
         let mut locale_names = String::from("\n\t\"local_names\" : [ ");
@@ -92,7 +94,9 @@ impl Waypoints {
         content += &locale_values;
         content += &site_names;
         content += &site_values;
-        file.read_to_string(&mut content);
+        content += "}";
+        println!( "{}", content );
+        fs::write(filename, &content);
     }
 
     pub fn add( &mut self, loc: &Vec<String> ) {
