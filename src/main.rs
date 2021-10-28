@@ -11,6 +11,7 @@ fn main() {
     let mut go_to: String = String::new();
     
     let mut verbose = false;
+    let mut list = false;
     let mut add: Vec<String> = Vec::new();
     let mut drop: Vec<String> = Vec::new();
     { 
@@ -19,6 +20,9 @@ fn main() {
         ap.refer(&mut verbose)
             .add_option(&["-v", "--verbose"], StoreTrue,
             "Be verbose");
+        ap.refer(&mut list)
+            .add_option(&["-l", "--list"], StoreTrue,
+            "List all waypoints");
         ap.refer(&mut go_to)
             .add_argument("goto", Store,
             "Go somewhere");
@@ -39,7 +43,10 @@ fn main() {
     wp.save( &waypoints_file );
     // If we want to go_to somewhere, we need to communicate that to the shell
     // script that wraps this.
-    if !go_to.is_empty() {
+    if list && go_to.is_empty() {
+        println!( "{}", &wp);
+    }
+    else if !go_to.is_empty() {
         println!( "{}", &wp.goto( go_to.clone() ));
     }
 
