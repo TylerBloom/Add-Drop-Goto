@@ -43,11 +43,11 @@ impl std::fmt::Display for Waypoints {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "Locales:\n")?;
         for (key, val) in &self.locales {
-            write!(f, "{} : {}\n", key, val)?;
+            write!(f, "\t{} : {}\n", key, val)?;
         }
         write!(f, "\nSites:\n")?;
         for (key, val) in &self.sites {
-            write!(f, "{} : {}\n", key, val)?;
+            write!(f, "\t{} : {}\n", key, val)?;
         }
         Ok(())
     }
@@ -84,9 +84,9 @@ impl Waypoints {
         first = true;
         for (name, value) in &self.sites {
             site_names += if first {""} else {", "};
-            site_names += &name;
+            site_names += &format!( "\"{}\"", name );
             site_values += if first {""} else {", "};
-            site_values += &value;
+            site_values += &format!( "\"{}\"", value );
             first = false;
         }
         site_names += "],";

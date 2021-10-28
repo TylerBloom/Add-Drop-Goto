@@ -1,64 +1,75 @@
-ABOUT:<br />
-Adg, standing for add-drop-goto, is a general utility useful for navigating to and between<br />
-directories that are commonly accessed, have long path names, and navigating hierachical structures.<br />
-It does this by storing given directories under an alias, called a waypoint.<br/><br />
-CONFIGURING:<br />
-Running ./install.sh. This will moving files where they need to go and add the required things to your .bashrc<br />
-After running install.sh, you'll need to source your ~/.bashrc and /etc/bash_completion for any open terminals. <br />
-<br />
-HOW TO USE:<br />
-There are five option to pass to adg, -a, -d, -g, -v, and -l. <br />
--a: <br />
-This option is used to add directories as waypoints. Since there can only be one waypoint of a given name use '-a --f' to change the directory to which a waypoint refers.<br />
-Example:
+##Goal
+Add-Drop-Goto, or `adg` for short, seeks provide way to store shortcuts for the names of directories that works across active terminals. Moreover, it wraps the `cd` command so that you can largely replace its usage with `adg`, even when moving between directories that do not have shortcuts.
+
+##About
+Quickly moving between projects or around a directory tree can be challenging. Often, the easiest solutions to this are terse directory names, limiting subdirectory trees, and/or relying on your shell's command autocompletion. Providing shortcuts allows for quickly moving between directories.
+
+There are two types of shortcuts that `adg` provides.
+
+First of these are refered to as "locales". These are shortcuts that expand to an absolute path. Project directories are prime canadites for this type of shortcut.
+
+The second type of shortcut is refered to a "site". These are shortcuts that expand to a relative path. These shortcuts are meant to express directories that are common between locales.
+
+## Example
+Consider the following directory tree.
 ```
-adg -a foobar /home/JohnDoe/foo/bar/
+HOME
+|
+└───projectOne
+|  └───build
+|  │   └───subfolder1
+|  └───docs
+|
+└───projectTwo
+    └───build
 ```
-This will add a waypoint called "foobar" that refers to the given directory.<br />
-The order in which you pass directories and new waypoints doesn't matter, i.e. "adg -a ./ foobar" does the same thing as "adg -a foobar ./".<br /><br />
--d: <br />
-This option is used to remove a waypoint. <br />
-Example:
+With `adg` the above directories could be shortcut to `one: HOME/projectOne` and `two: HOME/projectTwo`. Since both projects have a `build` directory, a site could be added such as `bld: build`. This allows the directory `HOME/projectOne/build` to be expressed as `one/bld`. Similarly, `HOME/projectOne/docs` can be written as `one/docs`.
+
+##Configuring
+To start, run the `install.sh` bash script. This will create the required directories and copy the `adg` executable where it needs to go.
+
+Next, you will need a shell script that wraps the `adg` executable. Since communicating with the parent terminal isn't possible, a shell script is needed. Currently, both bash and fish shell are supported. Copy the shell script somewhere in your `$PATH` (such as `~/bin`) and alias the script to be sourced. For Bash users, this will look like `alias adg=". adg.sh"`. This is required in order to move directories.
+
+After that, you are all set up!
+
+##How to Use
+By default, `adg` will expand your arguments into a path unless your specify any of it's three arguments.
 ```
-adg -d foobar
+$ pwd
+>> HOME
+$ adg one/bld
+$ pwd
+>> HOME/projectOne/build
 ```
-This will remove "foobar" from the avaliable waypoints.<br /><br />
--g:<br />
-This option is what moves you between waypoints. <br />
-Example:
+
+To add a shortcut, use `--add` or `-a`. In order to specify a new locale, you must give the path (relative or absolute) to a directory and a name for this shortcut. For locales, the order doesn't matter. Starting from the home directory in the example, we can do this by:
 ```
-adg -g foobar
+$ adg -a one HOME/projectOne
+$ adg -a two projectTwo
 ```
-This will changing your current directory to the directory to which "foobar" refers.<br /><br />
--l:<br />
-This option, simply, lets you look at what waypoints are current available. This can be used in conjuction with other options.<br />
-Examples:
+To add a site, you must give the name of the shortcut followed by the path. Again, starting from the home directory in the example, we can the `build` shortcut by:
+```
+$ adg -a bld build
+```
+
+To remove a shortcut, use `--drop` or `-d` followed by the name of the shortcut:
+```
+$ adg -d one
+$ adg -d bld
+```
+
+To see your stored use `--list` or `-l`:
 ```
 $ adg -l
->> Current Waypoints:
+>> Locales:
+>>	 one : HOME/projectOne
+>>	 two : HOME/projectTwo
 >>
-$ adg -a foobar foo/bar -l
->> Current Waypoints:
->> 'foobar' as /home/JohnDoe/foo/bar
->> 
+>> Sites:
+>>	 bld : build
 ```
-The first example will just list the current waypoints. The second will list then add the new waypoint.<br /><br />
--v:<br />
-This option will give verbose output. Allowing you to see what is happening, when it happens.<br />
-Example:
-```
-$ adg -v -a foobar \~/foo/bar/
->> Verbose option found. Additional read-out will appear
->> Current waypoints:
->> 
->> Adding /home/JohnDoe/foo/bar as 'foobar'
->> Current waypoints:
->> 'foobar' as /home/JohnDoe/foo/bar
->> 
-```
-NOTES:<br />
-This script it also tab completable.<br />
-If you type "adg -g foo" then press tab, it will auto-complete to "adg -g foobar".<br />
-During configuration, a directory called "\~/.waypoints" will be created to store the adg script, associated functions, and waypoints.txt (the waypoints storage file).<br />
-These can be moved to anywhere you wish but are required to be in your global PATH. Waypoints will figure out that it has been moved and adjust accordingly.<br />
-Lastly, this works across terminals, so you can add a waypoint in one terminal, switch to another and goto the waypoint set from the original terminal without issue.
+
+##Notes and Planned Changes
+Ideally, the shell script wrapper would be removed. The main issue there is that it is impossible (or at least very hard) to communicate with your parent shell session in Rust. Until such time, shell scripts for other shells, such as zsh, will be added.
+
+In prior iterators of this project, tab-completion was supported as standard tab-completion breaks down when you use a shortcut. This is planned to make a return, but will need reworked in Rust and for each supported shell type.
