@@ -1,6 +1,5 @@
-use std::fs::{File, read_to_string, metadata, canonicalize};
+use std::fs::{read_to_string, metadata, canonicalize};
 use std::fs;
-use std::io::prelude::*;
 use std::path::PathBuf;
 use std::collections::HashMap;
 use std::fmt;
@@ -67,36 +66,37 @@ impl Waypoints {
     }
     
     pub fn save( &self, filename: &PathBuf ) {
-        println!( "{:?}", filename );
-        let mut file = File::open(filename).unwrap();
         let mut content = String::from("{");
-        let mut locale_names = String::from("\n\t\"local_names\" : [ ");
-        let mut locale_values = String::from("\n\t\"local_values\" : [ ");
+        let mut locale_names = String::from("\n\t\"locale_names\" : [ ");
+        let mut locale_values = String::from("\n\t\"locale_values\" : [ ");
+        let mut first: bool = true;
         for (name, value) in &self.locales {
-            locale_names += &name;
-            locale_names += ",";
-            locale_values += &value;
-            locale_values += ",";
+            locale_names += if first {""} else {", "};
+            locale_names += &format!( "\"{}\"", &name );
+            locale_values += if first {""} else {", "};
+            locale_values += &format!( "\"{}\"", &value );
+            first = false;
         }
-        locale_names += "]\n";
-        locale_values += "]\n";
-        let mut site_names = String::from("\n\t\"local_names\" : [ ");
-        let mut site_values = String::from("\n\t\"local_values\" : [ ");
+        locale_names += "],";
+        locale_values += "],";
+        let mut site_names = String::from("\n\t\"site_names\" : [ ");
+        let mut site_values = String::from("\n\t\"site_values\" : [ ");
+        first = true;
         for (name, value) in &self.sites {
+            site_names += if first {""} else {", "};
             site_names += &name;
-            site_names += ",";
+            site_values += if first {""} else {", "};
             site_values += &value;
-            site_values += ",";
+            first = false;
         }
-        site_names += "]\n";
-        site_values += "]\n";
+        site_names += "],";
+        site_values += "]";
         content += &locale_names;
         content += &locale_values;
         content += &site_names;
         content += &site_values;
-        content += "}";
-        println!( "{}", content );
-        fs::write(filename, &content);
+        content += "\n}";
+        fs::write(filename, &content).expect( "Could not write to file..." );
     }
 
     pub fn add( &mut self, loc: &Vec<String> ) {

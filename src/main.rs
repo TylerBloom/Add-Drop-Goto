@@ -1,6 +1,5 @@
 
 use argparse::{ArgumentParser, StoreTrue, List, Store};
-use std::fs;
 use home;
 
 mod waypoints;
@@ -32,21 +31,16 @@ fn main() {
         ap.parse_args_or_exit();
     }
 
-    println!( "Add: {:?}", add );
-    println!( "Drop: {:?}", drop );
-    println!( "Goto: {:?}", go_to );
-
     let mut waypoints_file = home::home_dir().unwrap();
     waypoints_file.push(".config/adg/waypoints.json");
-    let mut tmp: waypoints::Waypoints = waypoints::load(&waypoints_file);
-    tmp.drop( &drop );
-    tmp.add( &add );
-    tmp.save( &waypoints_file );
+    let mut wp: waypoints::Waypoints = waypoints::load(&waypoints_file);
+    wp.drop( &drop );
+    wp.add( &add );
+    wp.save( &waypoints_file );
+    // If we want to go_to somewhere, we need to communicate that to the shell
+    // script that wraps this.
     if !go_to.is_empty() {
-        println!( "{}", &tmp.goto( go_to.clone() ));
+        println!( "{}", &wp.goto( go_to.clone() ));
     }
-    println!( "{}", tmp );
-
-
 
 }
