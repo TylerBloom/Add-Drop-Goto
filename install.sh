@@ -4,6 +4,8 @@
 
 [ ! -e ~/.config/adg ] && mkdir ~/.config/adg # Creates a directory to store waypoints.txt
 
+cp waypoints.json ~/.config/adg
+
 # TODO: In the future, there will be a pre-compile release of adg on Github. For now, it needs to be compiled
 cargo build --release
 cp target/release/adg ~/.config/adg/
