@@ -4,7 +4,7 @@ output="$(~/.config/adg/adg $@)"
 
 if [[ "$output" ]]
 then
-	if [[ "$@" == *"-l"* ]]
+	if [[ "$@" == *"list"* ]]
 	then
 		echo "${output}"
 	else
