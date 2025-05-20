@@ -42,25 +42,25 @@ $ pwd
 >> HOME/projectOne/build
 ```
 
-To add a shortcut, use `--add` or `-a`. In order to specify a new locale, you must give the path (relative or absolute) to a directory and a name for this shortcut. For locales, the order doesn't matter. Starting from the home directory in the example, we can do this by:
+To add a shortcut, use `add`. In order to specify a new locale, you must give the path (relative or absolute) to a directory and a name for this shortcut. For locales, the order doesn't matter. Starting from the home directory in the example, we can do this by:
 ```
-$ adg -a one HOME/projectOne
-$ adg -a two projectTwo
+$ adg add one HOME/projectOne
+$ adg add two projectTwo
 ```
 To add a site, you must give the name of the shortcut followed by the path. Again, starting from the home directory in the example, we can the `build` shortcut by:
 ```
-$ adg -a bld build
+$ adg add bld build
 ```
 
-To remove a shortcut, use `--drop` or `-d` followed by the name of the shortcut:
+To remove a shortcut, use `--drop` followed by the name of the shortcut:
 ```
-$ adg -d one
-$ adg -d bld
+$ adg drop one
+$ adg drop bld
 ```
 
-To see your stored use `--list` or `-l`:
+To see your stored use `--list`:
 ```
-$ adg -l
+$ adg list
 >> Locales:
 >>	 one : HOME/projectOne
 >>	 two : HOME/projectTwo
